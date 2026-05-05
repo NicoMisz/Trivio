@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ----- Rutas públicas -----
-// Persona 2 — Auth
+// Nico — Auth
 // Route::post('/register', [AuthController::class, 'register']);
 // Route::post('/login',    [AuthController::class, 'login']);
 
@@ -21,17 +21,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/me', fn (Request $r) => $r->user());
 
-    // Persona 2 — Auth
+    // Nico — Auth + Categorías
     // Route::post('/logout', [AuthController::class, 'logout']);
-
-    // Persona 1 — Categorías y Preguntas
     // Route::apiResource('categories', CategoryController::class);
-    // Route::apiResource('questions',  QuestionController::class);
 
-    // Persona 2 — Respuestas (anidadas bajo question)
+    // Marta — Preguntas + Respuestas
+    // Route::apiResource('questions',         QuestionController::class);
     // Route::apiResource('questions.answers', AnswerController::class)->shallow();
 
-    // Persona 3 — Partidas
+    // Mar — Partidas
     // Route::apiResource('games', GameController::class)->only(['index', 'store', 'show']);
     // Route::get ('games/{game}/questions', [GameController::class, 'questions']);
     // Route::post('games/{game}/answers',   [GameController::class, 'submitAnswers']);

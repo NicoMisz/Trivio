@@ -1,6 +1,6 @@
-# Persona 3 — Partidas y Puntuación
+# Mar — Partidas y Puntuación (Persona 3)
 
-Te encargas de los **Puntos 4 y 5** del enunciado: gestión de partidas (crear, obtener preguntas, puntuar) y la versión por usuario autenticado (guardar respuestas, guardar puntuación, historial).
+Te encargas de los **Puntos 4 y 5** del enunciado: gestión de partidas (crear, obtener preguntas, puntuar) y la versión por usuario autenticado (guardar respuestas, guardar puntuación, historial). Es la parte más pesada y depende de Marta y Nico.
 
 > Las migraciones `games` y `game_questions` ya están creadas y ejecutadas. Lectura recomendada antes de empezar:
 > - [BankApi/database/migrations/2026_04_29_163704_create_games_table.php](BankApi/database/migrations/2026_04_29_163704_create_games_table.php)
@@ -80,7 +80,7 @@ Endpoints (todos detrás de `auth:sanctum`):
 ### `GET /api/games/{game}/questions` — obtener preguntas
 - Verifica que `$game->user_id === auth()->id()` (si no, 403).
 - Devuelve preguntas con sus 3 respuestas, **sin el campo `es_correcta`**.
-- Coordina con Persona 2 para usar un Resource específico (p. ej. `AnswerPublicResource`) o un campo extra.
+- Coordina con Marta para usar un Resource específico (p. ej. `AnswerPublicResource`) o un campo extra.
 
 ### `POST /api/games/{game}/answers` — guardar respuestas
 Body esperado:
@@ -125,7 +125,7 @@ return [
 
 ## 5. BankApi — Rutas
 
-Descomenta en [BankApi/routes/api.php](BankApi/routes/api.php) las líneas marcadas como **Persona 3**:
+Descomenta en [BankApi/routes/api.php](BankApi/routes/api.php) las líneas marcadas como **Mar**:
 
 ```php
 Route::apiResource('games', GameController::class)->only(['index', 'store', 'show']);
@@ -166,13 +166,13 @@ Carga `/games/{id}`, muestra cada pregunta con la respuesta elegida marcada y la
 
 ## 7. Rutas Ludiweb
 
-Descomenta en [LudiWeb/routes/web.php](LudiWeb/routes/web.php) las líneas marcadas como **Persona 3**.
+Descomenta en [LudiWeb/routes/web.php](LudiWeb/routes/web.php) las líneas marcadas como **Mar**.
 
 ---
 
 ## 8. Pruebas
 
-- Colección **Postman** `BankApi/postman/Persona3.json` con el flujo completo: login → crear partida → obtener preguntas → enviar respuestas → calcular puntuación → ver historial.
+- Colección **Postman** `BankApi/postman/Mar.json` con el flujo completo: login → crear partida → obtener preguntas → enviar respuestas → calcular puntuación → ver historial.
 - Probar en navegador la partida completa.
 - Caso límite: enviar `answer_id` de una pregunta que no es de tu partida → debe rechazar.
 
@@ -195,9 +195,9 @@ Descomenta en [LudiWeb/routes/web.php](LudiWeb/routes/web.php) las líneas marca
 
 ## Bloqueos / dependencias
 
-- **Necesitas**: modelos `Category`, `Question` (Persona 1) y `Answer` (Persona 2), y auth funcionando (Persona 2).
-- **Te bloquean**: Persona 1 y Persona 2.
-- **Estrategia**: empieza por modelos, controlador y rutas con datos mock (puedes crear preguntas a mano por SQL en `database.sqlite`). Cuando P1 y P2 mergeen, integra de verdad.
+- **Necesitas**: modelo `Category` y auth (Nico) + modelos `Question` y `Answer` (Marta).
+- **Te bloquean**: Nico y Marta.
+- **Estrategia**: empieza por modelos, controlador y rutas con datos mock (puedes crear preguntas a mano por SQL en `database.sqlite`). Cuando Nico y Marta mergeen, integra de verdad.
 - **Bloqueas a**: nadie.
 
 ---
@@ -209,4 +209,4 @@ Cuando devuelves preguntas dentro de un `GET /games/{id}/questions`, **no debe f
 1. Crear `AnswerPublicResource` (sin el campo) y usarlo en este endpoint.
 2. Pasar un flag al `AnswerResource` y omitir el campo cuando se está jugando.
 
-Pacta con Persona 2 cuál usáis.
+Pacta con Marta cuál usáis (es ella la dueña del `AnswerResource`).

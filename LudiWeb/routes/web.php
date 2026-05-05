@@ -12,21 +12,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home');
 
-// Persona 1 — Categorías y Preguntas
+// Nico — Auth + Categorías
+// Route::view('/login',                'auth.login');
+// Route::view('/register',             'auth.register');
+// Route::view('/logout',               'auth.logout');
 // Route::view('/categories',           'categories.index');
 // Route::view('/categories/create',    'categories.create');
 // Route::view('/categories/{id}/edit', 'categories.edit');
-// Route::view('/questions',            'questions.index');
-// Route::view('/questions/create',     'questions.create');
-// Route::view('/questions/{id}/edit',  'questions.edit');
 
-// Persona 2 — Auth y Respuestas
-// Route::view('/login',                  'auth.login');
-// Route::view('/register',               'auth.register');
-// Route::view('/logout',                 'auth.logout');
+// Marta — Preguntas + Respuestas
+// Route::view('/questions',              'questions.index');
+// Route::view('/questions/create',       'questions.create');
+// Route::view('/questions/{id}/edit',    'questions.edit');
 // Route::view('/questions/{id}/answers', 'answers.index');
 
-// Persona 3 — Partidas
+// Mar — Partidas
 // Route::view('/games',      'games.index');
 // Route::view('/games/play', 'games.play');
 // Route::view('/games/{id}', 'games.show');

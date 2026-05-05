@@ -46,35 +46,35 @@ La URL de BankApi se configura en `LudiWeb/.env` con `BANKAPI_URL`.
 
 Cada persona tiene su parte detallada en:
 
-- [PERSONA1.md](PERSONA1.md) — Categorías y Preguntas
-- [PERSONA2.md](PERSONA2.md) — Respuestas y Autenticación
-- [PERSONA3.md](PERSONA3.md) — Partidas y Puntuación
+- [NICO.md](NICO.md) — **Persona 2**: Categorías + Autenticación (empieza primero, desbloquea a los demás)
+- [MARTA.md](MARTA.md) — **Persona 1**: Preguntas + Respuestas
+- [MAR.md](MAR.md) — **Persona 3**: Partidas + Puntuación
 
 ## Estructura del dominio
 
-| Tabla | Pertenece a | Notas |
+| Tabla | Dueño | Notas |
 |---|---|---|
-| `categories` | Persona 1 | nombre, descripcion |
-| `questions` | Persona 1 | enunciado, dificultad (easy/medium/hard), imagen, FK category |
-| `answers` | Persona 2 | texto, es_correcta, FK question. 3 por pregunta, 1 correcta |
-| `users` | (base) | extendido con Sanctum (Persona 2) |
-| `games` | Persona 3 | user_id, puntuacion, started_at, finished_at |
-| `game_questions` | Persona 3 | game_id, question_id, answer_id, is_correct |
+| `categories` | Nico | nombre, descripcion |
+| `users` | Nico (auth) | extendido con Sanctum |
+| `questions` | Marta | enunciado, dificultad (easy/medium/hard), imagen, FK category |
+| `answers` | Marta | texto, es_correcta, FK question. 3 por pregunta, 1 correcta |
+| `games` | Mar | user_id, puntuacion, started_at, finished_at |
+| `game_questions` | Mar | game_id, question_id, answer_id, is_correct |
 
 ## Endpoints planificados
 
 Definidos como placeholders en [BankApi/routes/api.php](BankApi/routes/api.php). Todos detrás de `auth:sanctum` excepto `/register` y `/login`.
 
-| Método | Ruta | Persona |
+| Método | Ruta | Dueño |
 |---|---|---|
-| POST | `/api/register` | 2 |
-| POST | `/api/login` | 2 |
-| POST | `/api/logout` | 2 |
-| GET | `/api/me` | 2 |
-| `apiResource` | `/api/categories` | 1 |
-| `apiResource` | `/api/questions` | 1 |
-| `apiResource` | `/api/questions/{question}/answers` | 2 |
-| GET / POST | `/api/games`, `/api/games/{id}` | 3 |
-| GET | `/api/games/{id}/questions` | 3 |
-| POST | `/api/games/{id}/answers` | 3 |
-| POST | `/api/games/{id}/score` | 3 |
+| POST | `/api/register` | Nico |
+| POST | `/api/login` | Nico |
+| POST | `/api/logout` | Nico |
+| GET | `/api/me` | (base) |
+| `apiResource` | `/api/categories` | Nico |
+| `apiResource` | `/api/questions` | Marta |
+| `apiResource` | `/api/questions/{question}/answers` | Marta |
+| GET / POST | `/api/games`, `/api/games/{id}` | Mar |
+| GET | `/api/games/{id}/questions` | Mar |
+| POST | `/api/games/{id}/answers` | Mar |
+| POST | `/api/games/{id}/score` | Mar |
