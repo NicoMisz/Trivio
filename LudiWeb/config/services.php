@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'bankapi' => [
+        'url' => env('BANKAPI_URL', 'http://localhost:8000'),
+    ],
+
 ];
