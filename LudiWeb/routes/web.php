@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'home');
 
 // Nico — Auth + Categorías
-// Route::view('/login',                'auth.login');
-// Route::view('/register',             'auth.register');
-// Route::view('/logout',               'auth.logout');
-// Route::view('/categories',           'categories.index');
-// Route::view('/categories/create',    'categories.create');
-// Route::view('/categories/{id}/edit', 'categories.edit');
+Route::view('/login',                'auth.login');
+Route::view('/register',             'auth.register');
+Route::view('/logout',               'auth.logout');
+Route::view('/categories',           'categories.index');
+Route::view('/categories/create',    'categories.create');
+Route::view('/categories/{id}/edit', 'categories.edit');
 
 // Marta — Preguntas + Respuestas
 // Route::view('/questions',              'questions.index');

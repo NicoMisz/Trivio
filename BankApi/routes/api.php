@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 // ----- Rutas públicas -----
 // Nico — Auth
-// Route::post('/register', [AuthController::class, 'register']);
-// Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login',    [AuthController::class, 'login']);
 
 // ----- Rutas autenticadas (Sanctum) -----
 Route::middleware('auth:sanctum')->group(function () {
@@ -22,8 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', fn (Request $r) => $r->user());
 
     // Nico — Auth + Categorías
-    // Route::post('/logout', [AuthController::class, 'logout']);
-    // Route::apiResource('categories', CategoryController::class);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::apiResource('categories', CategoryController::class);
 
     // Marta — Preguntas + Respuestas
     // Route::apiResource('questions',         QuestionController::class);
