@@ -8,24 +8,24 @@ use Illuminate\Foundation\Http\FormRequest;
 class UpdateAnswerRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Retornar 'true' perquè qualsevol usuari autenticat pot crear preguntes
+     * (canvair a 'false' en cas que no volguem que sigui així)
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * Regles de validació que s'han de complir per a actualitzar una resposta.
+     * En aquest cas, els camps són 'sometimes' ja que és validen si l'usuari 
+     * proporciona el camp.
      */
     public function rules(): array
     {
         return [
-            //
-            'texto' => ['required', 'string'],
-            'es_correcta' => ['required', 'boolean'],
+            'texto' => ['sometimes', 'string'],
+            'es_correcta' => ['sometimes', 'boolean'],
         ];
     }
 }
