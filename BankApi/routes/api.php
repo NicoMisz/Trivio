@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\AnswerController;
+
 /*
 |--------------------------------------------------------------------------
 | Rutas API de BankApi
@@ -26,8 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::apiResource('categories', CategoryController::class);
 
     // Marta — Preguntas + Respuestas
-    // Route::apiResource('questions',         QuestionController::class);
-    // Route::apiResource('questions.answers', AnswerController::class)->shallow();
+    Route::apiResource('questions', QuestionController::class);
+    Route::apiResource('questions.answers', AnswerController::class)->shallow(); //shallow per no tenir que passar sempre el question_id
 
     // Mar — Partidas
     // Route::apiResource('games', GameController::class)->only(['index', 'store', 'show']);
