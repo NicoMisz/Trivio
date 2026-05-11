@@ -5,10 +5,13 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AnswerResource extends JsonResource
+class AnswerPublicResource extends JsonResource
 {
     /**
-     * Transforma les respostes del model en un Json estructurat
+     * Resource que transforma les respostes del model en un Json estructurat. 
+     * Usarem aquest per partides públiques, per aquest motiu no s'inclou el 
+     * camp 'es_correcta' ja que el jugador no ha de poder veure quina es la 
+     * resposta correcta.
      */
     public function toArray(Request $request): array
     {
@@ -16,9 +19,6 @@ class AnswerResource extends JsonResource
             'id' => $this -> id,
             'question_id' => $this -> question_id,
             'text' => $this -> texto,
-            'es_correcta' => $this -> es_correcta,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
         ];
     }
 }
