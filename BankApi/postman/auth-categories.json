@@ -1,0 +1,399 @@
+{
+    "info": {
+        "name": "Trivio · Auth + Categorías",
+        "description": "Endpoints de auth + categorías: registro, login, logout, /me y CRUD de Categorías.\n\n## Cómo usar\n\n1. Importa esta colección en Postman.\n2. Asegúrate de tener BankApi corriendo: `php artisan serve --port=8000` desde `BankApi/`.\n3. Ejecuta los requests en orden. El **Login** guarda automáticamente el token en `{{token}}` para los demás requests.\n\n## Variables de colección\n\n- `baseUrl` — base de la API (por defecto `http://localhost:8000`).\n- `token` — se rellena automáticamente tras Login/Register.\n- `email`, `password` — se rellenan tras Register para reutilizar en Login.\n- `categoryId` — se rellena tras Crear categoría.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        { "key": "baseUrl",    "value": "http://localhost:8000" },
+        { "key": "token",      "value": "" },
+        { "key": "email",      "value": "" },
+        { "key": "password",   "value": "secret123" },
+        { "key": "categoryId", "value": "" }
+    ],
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Register",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "// Genera un email aleatorio para cada ejecución",
+                                    "const rand = Math.floor(Math.random() * 1000000);",
+                                    "const email = `nico-${rand}@test.com`;",
+                                    "pm.collectionVariables.set('email', email);"
+                                ]
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 201', () => pm.response.to.have.status(201));",
+                                    "const data = pm.response.json();",
+                                    "pm.test('devuelve token', () => pm.expect(data.token).to.be.a('string'));",
+                                    "pm.test('devuelve user', () => pm.expect(data.user.email).to.eql(pm.collectionVariables.get('email')));",
+                                    "pm.collectionVariables.set('token', data.token);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/register", "host": ["{{baseUrl}}"], "path": ["api", "register"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Nico Test\",\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "const data = pm.response.json();",
+                                    "pm.test('devuelve token', () => pm.expect(data.token).to.be.a('string'));",
+                                    "pm.collectionVariables.set('token', data.token);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/login", "host": ["{{baseUrl}}"], "path": ["api", "login"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"{{password}}\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Me",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('contiene email', () => pm.expect(pm.response.json().email).to.be.a('string'));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/me", "host": ["{{baseUrl}}"], "path": ["api", "me"] }
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('mensaje Logout OK', () => pm.expect(pm.response.json().message).to.eql('Logout OK'));",
+                                    "pm.collectionVariables.set('token', '');"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/logout", "host": ["{{baseUrl}}"], "path": ["api", "logout"] }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Categorías",
+            "item": [
+                {
+                    "name": "Listar",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('devuelve array', () => pm.expect(pm.response.json().data).to.be.an('array'));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] }
+                    }
+                },
+                {
+                    "name": "Crear",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 201 o 200', () => pm.expect([200, 201]).to.include(pm.response.code));",
+                                    "const data = pm.response.json().data;",
+                                    "pm.test('devuelve id', () => pm.expect(data.id).to.be.a('number'));",
+                                    "pm.collectionVariables.set('categoryId', data.id);"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Content-Type",  "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"Geografía\",\n    \"descripcion\": \"Capitales, mapas y banderas\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Ver",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories/{{categoryId}}", "host": ["{{baseUrl}}"], "path": ["api", "categories", "{{categoryId}}"] }
+                    }
+                },
+                {
+                    "name": "Actualizar",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 200', () => pm.response.to.have.status(200));",
+                                    "pm.test('nombre actualizado', () => pm.expect(pm.response.json().data.nombre).to.eql('Geografía mundial'));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Content-Type",  "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories/{{categoryId}}", "host": ["{{baseUrl}}"], "path": ["api", "categories", "{{categoryId}}"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"nombre\": \"Geografía mundial\",\n    \"descripcion\": \"Capitales y geografía política\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Borrar",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 204', () => pm.response.to.have.status(204));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories/{{categoryId}}", "host": ["{{baseUrl}}"], "path": ["api", "categories", "{{categoryId}}"] }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Casos de error",
+            "item": [
+                {
+                    "name": "Login con contraseña incorrecta (422)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 422', () => pm.response.to.have.status(422));",
+                                    "pm.test('mensaje Credenciales inválidas', () => pm.expect(pm.response.json().message).to.eql('Credenciales inválidas'));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/login", "host": ["{{baseUrl}}"], "path": ["api", "login"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"{{email}}\",\n    \"password\": \"mala-contraseña\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Registro con email duplicado (422)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 422', () => pm.response.to.have.status(422));",
+                                    "pm.test('error en email', () => pm.expect(pm.response.json().errors.email).to.be.an('array'));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Content-Type", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/register", "host": ["{{baseUrl}}"], "path": ["api", "register"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Duplicado\",\n    \"email\": \"{{email}}\",\n    \"password\": \"secret123\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Categorías sin token (401)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 401', () => pm.response.to.have.status(401));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Accept", "value": "application/json" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] }
+                    }
+                },
+                {
+                    "name": "Crear categoría sin nombre (422)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 422', () => pm.response.to.have.status(422));",
+                                    "pm.test('error en nombre', () => pm.expect(pm.response.json().errors.nombre).to.be.an('array'));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Content-Type",  "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"descripcion\": \"Sin nombre\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "Ver categoría inexistente (404)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "pm.test('status 404', () => pm.response.to.have.status(404));"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
+                        ],
+                        "url": { "raw": "{{baseUrl}}/api/categories/99999", "host": ["{{baseUrl}}"], "path": ["api", "categories", "99999"] }
+                    }
+                }
+            ]
+        }
+    ]
+}
